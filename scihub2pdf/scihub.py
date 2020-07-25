@@ -1,36 +1,41 @@
 from __future__ import unicode_literals, print_function, absolute_import
 
+import traceback
+
 import requests
-from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 
 from PIL import Image
-from scihub2pdf.tools import norm_url, download_pdf
+from tools import norm_url, download_pdf
 from base64 import b64decode as b64d
 from six import string_types
 import sys
+
 try:
     from StringIO import StringIO
     from io import BytesIO
 except ImportError:
     from io import StringIO, BytesIO
 
+import tools
+
+import config
+
 
 class SciHub(object):
     def __init__(self,
                  headers,
-                 xpath_captcha="//*[@id='captcha']",
-                 xpath_pdf="//*[@id='pdf']",
-                 xpath_input="/html/body/div/table/tbody/tr/td/form/input",
-                 xpath_form="/html/body/div/table/tbody/tr/td/form",
-                 domain_scihub="http://sci-hub.cc/",
                  ):
 
-        self.xpath_captcha = xpath_captcha
-        self.xpath_input = xpath_input
-        self.xpath_form = xpath_form
-        self.xpath_pdf = xpath_pdf
-        self.domain_scihub = domain_scihub
+        self.driver_path = config.driver_path
+        self.location = config.location
+
+        self.xpath_captcha = config.xpath_captcha
+        self.xpath_input = config.xpath_input
+        self.xpath_form = config.xpath_form
+        self.xpath_pdf = config.xpath_pdf
+        self.domain_scihub = config.domain_scihub
+
         self.headers = headers
         self.driver = None
         self.sci_url = None
@@ -48,15 +53,12 @@ class SciHub(object):
     def start(self):
         try:
             self.s = requests.Session()
-            self.driver = webdriver.PhantomJS()
-        except WebDriverException:
-            print("\n\t Install PhantomJS for download files in sci-hub.\n")
-            print("\t OSX:")
-            print("\t\t npm install -g phantomjs")
-            print("\n\t Linux with npm:")
-            print("\t\t sudo apt-get install npm\n")
-            print("\t\t sudo npm install -g phantomjs\n")
-
+            # self.driver = webdriver.PhantomJS()
+            # driver_path = "C:\\Portable\\chromedriver_win32\\chromedriver.exe"
+            self.driver = tools.getDriver(self.driver_path)
+        except Exception as e:
+            print("\n\t get driver error.\n")
+            traceback.print_exc()
             sys.exit(1)
 
     def get_session(self):
@@ -74,16 +76,17 @@ class SciHub(object):
             self.headers)
 
         if not found:
-            self.driver.save_screenshot(self.pdf_file+".png")
+            self.driver.save_screenshot(self.pdf_file + ".png")
 
-        return found,  r
+        return found, r
 
     def navigate_to(self, doi, pdf_file):
         self.doi = doi
         self.pdf_file = pdf_file
-        self.sci_url = self.domain_scihub+doi
-        print("\n\tDOI: ", doi)
+        self.sci_url = self.domain_scihub + doi
+        print("\tDOI: ", doi)
         print("\tSci-Hub Link: ", self.sci_url)
+        print("\tpdf_file: ", pdf_file)
         r = requests.get(self.sci_url)
         found = r.status_code == 200
         if found:
@@ -115,7 +118,6 @@ class SciHub(object):
         self.driver.switch_to.default_content()
         return image
 
-
     def solve_captcha(self, captcha_text):
 
         # self.driver.save_screenshot(self.pdf_file+"before_solve.png")
@@ -131,11 +133,15 @@ class SciHub(object):
         return self.check_captcha()
 
     def get_iframe(self):
+        self.driver.get(self.sci_url)
+        # frame = self.driver.find_element_by_tag_name("iframe")
+        # self.driver.switch_to.frame(frame)
+        # find = self.driver.find_element_by_xpath('//*[@id="pdf"]')
         self.has_iframe, self.el_iframe = self.get_el(self.xpath_pdf)
         if self.has_iframe:
             self.pdf_url = norm_url(self.el_iframe.get_attribute("src"))
         else:
-            self.driver.save_screenshot(self.pdf_file+".png")
+            self.driver.save_screenshot(self.pdf_file + ".png")
 
         return self.has_iframe
 
@@ -155,11 +161,12 @@ class SciHub(object):
         print("\tchecking if has captcha...")
         has_iframe = self.get_iframe()
         if has_iframe is False:
+            print("\tCurrent url: %s" % self.driver)
             print("\tNo pdf found. Maybe, the sci-hub dosen't have the file")
             print("\tTry to open the link in your browser.")
             return False, has_iframe
 
-        self.driver.save_screenshot(self.pdf_file+"check_captcha.png")
+        # self.driver.save_screenshot(self.pdf_file+"check_captcha.png")
         self.driver.switch_to.frame(self.el_iframe)
         self.has_captcha, self.el_captcha = self.get_el(self.xpath_captcha)
         if self.has_captcha:

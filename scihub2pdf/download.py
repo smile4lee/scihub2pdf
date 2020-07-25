@@ -6,9 +6,10 @@ import bibtexparser
 # from lxml.etree import ParserError
 import re
 from title2bib.crossref import get_bib_from_title
-from scihub2pdf.scihub import SciHub
-from scihub2pdf.libgen import LibGen
-from scihub2pdf.arxiv import Arxiv
+from scihub import SciHub
+from libgen import LibGen
+from arxiv import Arxiv
+
 headers = {
     # "Connection": "keep-alive",
     # "User-Agent": "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
@@ -27,7 +28,7 @@ headers = {
 # xpath_scihub_pdf = state_scihub[6]
 # has_update = state_scihub[7] != __version__
 # if has_update:
-# print("\n\t\tWill be better if you upgrade scihub2pdf.")
+# print("\n\t\tWill be better if you upgrade ")
 # print("\t\tFor that, just do:\n")
 # print("\t\t\t sudo pip install scihub2pdf --upgrade\n")
 # except:
@@ -35,18 +36,8 @@ headers = {
 
 libgen_url = "http://libgen.io/scimag/ads.php"
 libgen_xpath_pdf_url = "/html/body/table/tr/td[3]/a"
-xpath_captcha = "//*[@id='captcha']"
-xpath_pdf = "//*[@id='pdf']"
-xpath_input = "/html/body/div/table/tbody/tr/td/form/input"
-xpath_form = "/html/body/div/table/tbody/tr/td/form"
-domain_scihub = "http://sci-hub.cc/"
 
 ScrapSci = SciHub(headers,
-                  xpath_captcha,
-                  xpath_pdf,
-                  xpath_input,
-                  xpath_form,
-                  domain_scihub
                   )
 ScrapArx = Arxiv(headers)
 ScrapLib = LibGen(headers=headers,
@@ -57,8 +48,10 @@ ScrapLib = LibGen(headers=headers,
 def start_scihub():
     ScrapSci.start()
 
+
 def start_libgen():
     ScrapLib.start()
+
 
 def start_arxiv():
     ScrapArx.start()
@@ -83,10 +76,9 @@ def download_from_libgen(doi, pdf_file):
 
 
 def download_from_arxiv(value, location, field="id"):
-
     pdf_file = location
     if not location.endswith(".pdf"):
-        pdf_file = location+value+".pdf"
+        pdf_file = location + value + ".pdf"
 
     found, pdf_url = ScrapArx.navigate_to(value, pdf_file, field)
     if found:
@@ -119,7 +111,7 @@ def download_pdf_from_bibs(bibs, location="",
     def put_pdf_location(bib):
         pdf_name = bib["ID"] if "ID" in bib else bib["doi"].replace("/", "_")
         pdf_name += ".pdf"
-        bib["pdf_file"] = location+pdf_name
+        bib["pdf_file"] = location + pdf_name
         return bib
 
     # bibs_with_doi = list(filter(lambda bib: "doi" in bib, bibs))
@@ -128,7 +120,7 @@ def download_pdf_from_bibs(bibs, location="",
     for bib in bibs:
         if "journal" in bib:
             if bool(re.match("arxiv:", bib["journal"], re.I)):
-                pdf_file = location+bib["journal"]+".pdf"
+                pdf_file = location + bib["journal"] + ".pdf"
                 download_from_arxiv(bib["journal"], pdf_file, "id")
             elif "doi" in bib:
                 bibs_with_doi.append(bib)
@@ -156,7 +148,7 @@ def download_pdf_from_bibs(bibs, location="",
 
 def download_from_doi(doi, location="", use_libgen=False):
     pdf_name = "{}.pdf".format(doi.replace("/", "_"))
-    pdf_file = location+pdf_name
+    pdf_file = location + pdf_name
     if use_libgen:
         download_from_libgen(doi, pdf_file)
     else:
@@ -168,10 +160,11 @@ def download_from_title(title, location="", use_libgen=False):
     if found:
         bib = bibtexparser.loads(bib_string).entries[0]
         if "doi" in bib:
-            pdf_name = "{}.pdf".format(
-                bib["doi"].replace("/", "_")
-            )
-            bib["pdf_file"] = location+pdf_name
+            # pdf_name = "{}.pdf".format(
+            #     bib["doi"].replace("/", "_")
+            # )
+            pdf_name = "{}.pdf".format(title.replace(":", " -"))
+            bib["pdf_file"] = location + "\\" + pdf_name
             if use_libgen:
                 download_from_libgen(bib["doi"], bib["pdf_file"])
             else:

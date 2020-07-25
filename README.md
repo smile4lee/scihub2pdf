@@ -1,31 +1,21 @@
 # SciHub to PDF(Beta)
 
-![](https://raw.githubusercontent.com/bibcure/logo/master/gifs/scihub.gif) 
-## Description
+Many thanks to [bibcure](https://github.com/bibcure) for the original repository: https://github.com/bibcure/scihub2pdf
 
-scihub2pdf is a module of [bibcure](https://github.com/bibcure/bibcure)
 
-Downloads pdfs via a DOI number, article title or a bibtex file, using the
-database of libgen,  Sci-Hub and Arxiv.
-
-## Install
-
-```
-$ sudo python /usr/bin/pip install scihub2pdf
-```
-If you want  to download files from scihub you will need to get  PhantomJS
-
-### OSX
-```
-$ npm install -g phantomjs
-```
-### Linux Using npm
-
-```
-$ sudo apt-get install npm
-$ sudo npm install -g phantomjs
+## Install and config
+```bash
+python install -r requirements.txt
 ```
 
+If you want  to download files from scihub you will need to 
+1. download [chromwdriver](https://chromedriver.chromium.org/)
+2. modify `driver_path` value in the `config.py`
+
+The given title will be used as the pdf filename. Please note that the character ':' will be replaced by the
+ character " -" because of the restricts of filename in Windows.
+
+You can modify those configs in `config.py` if needed
 
 
 ## Features and how to use
@@ -42,7 +32,7 @@ $ scihub2pdf 10.1038/s41524-017-0032-0
 
 Given a title...
 ```
-$ scihub2pdf --title An useful paper
+$ scihub2pdf --title "An useful paper"
 ```
 
 Arxiv...
