@@ -1,14 +1,17 @@
 from __future__ import unicode_literals, print_function, absolute_import
 
-from builtins import input
-import bibtexparser
+import logging
 # from . import __version__
 # from lxml.etree import ParserError
 import re
+from builtins import input
+
+import bibtexparser
 from title2bib.crossref import get_bib_from_title
-from scihub import SciHub
-from libgen import LibGen
+
 from arxiv import Arxiv
+from libgen import LibGen
+from scihub import SciHub
 
 headers = {
     # "Connection": "keep-alive",
@@ -43,6 +46,14 @@ ScrapArx = Arxiv(headers)
 ScrapLib = LibGen(headers=headers,
                   libgen_url=libgen_url,
                   xpath_pdf_url=libgen_xpath_pdf_url)
+
+logger = logging.getLogger("scihub")
+
+
+def exit():
+    ScrapSci.exit()
+    ScrapArx.exit()
+    ScrapLib.exit()
 
 
 def start_scihub():
@@ -170,4 +181,4 @@ def download_from_title(title, location="", use_libgen=False):
             else:
                 found, bib = download_from_scihub(bib["doi"], bib["pdf_file"])
         else:
-            print("\tAbsent DOI")
+            logger.error("Absent DOI, title: %s", title)

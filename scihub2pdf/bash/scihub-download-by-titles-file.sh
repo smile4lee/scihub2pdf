@@ -2,4 +2,4 @@
 # download pdfs by titles input file
 
 cd ..
-scihub2pdf.py -i input\titles.txt --txt --title
+python scihub2pdf.py -i input/titles.txt --txt --title

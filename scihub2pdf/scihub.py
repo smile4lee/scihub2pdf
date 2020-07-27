@@ -1,15 +1,14 @@
 from __future__ import unicode_literals, print_function, absolute_import
 
-import traceback
+import sys
+from base64 import b64decode as b64d
 
 import requests
-from selenium.common.exceptions import NoSuchElementException, WebDriverException
-
 from PIL import Image
-from tools import norm_url, download_pdf
-from base64 import b64decode as b64d
+from selenium.common.exceptions import NoSuchElementException
 from six import string_types
-import sys
+
+from tool import norm_url, download_pdf
 
 try:
     from StringIO import StringIO
@@ -17,9 +16,11 @@ try:
 except ImportError:
     from io import StringIO, BytesIO
 
-import tools
-
+import tool
 import config
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class SciHub(object):
@@ -55,11 +56,17 @@ class SciHub(object):
             self.s = requests.Session()
             # self.driver = webdriver.PhantomJS()
             # driver_path = "C:\\Portable\\chromedriver_win32\\chromedriver.exe"
-            self.driver = tools.getDriver(self.driver_path)
+            self.driver = tool.get_driver(self.driver_path)
         except Exception as e:
-            print("\n\t get driver error.\n")
-            traceback.print_exc()
+            logger.error("get driver error")
+            logger.exception(e)
             sys.exit(1)
+
+    def exit(self):
+        if self.driver is not None:
+            logger.info("close and quit driver")
+            self.driver.close()
+            self.driver.quit()
 
     def get_session(self):
         cookies = self.driver.get_cookies()
@@ -84,17 +91,16 @@ class SciHub(object):
         self.doi = doi
         self.pdf_file = pdf_file
         self.sci_url = self.domain_scihub + doi
-        print("\tDOI: ", doi)
-        print("\tSci-Hub Link: ", self.sci_url)
-        print("\tpdf_file: ", pdf_file)
+        logger.info("DOI: %s", doi)
+        logger.info("Sci-Hub Link: %s", self.sci_url)
+        logger.info("pdf_file: %s", pdf_file)
         r = requests.get(self.sci_url)
         found = r.status_code == 200
         if found:
             self.driver.get(self.sci_url)
             self.driver.set_window_size(1120, 550)
         else:
-            print("\tSomething is wrong with sci-hub,")
-            print("\tstatus_code: ", r.status_code)
+            logger.error("status_code: %s, something is wrong with sci-hub", r.status_code)
         return found, r
 
     def get_captcha_img(self):
@@ -158,12 +164,12 @@ class SciHub(object):
         return found, el
 
     def check_captcha(self):
-        print("\tchecking if has captcha...")
+        logger.info("checking if has captcha...")
         has_iframe = self.get_iframe()
         if has_iframe is False:
-            print("\tCurrent url: %s" % self.driver)
-            print("\tNo pdf found. Maybe, the sci-hub dosen't have the file")
-            print("\tTry to open the link in your browser.")
+            logger.info("Current url: %s" % self.driver)
+            logger.error("No pdf found. Maybe, the sci-hub dosen't have the file. "
+                         "Please try to open the link in your browser.")
             return False, has_iframe
 
         # self.driver.save_screenshot(self.pdf_file+"check_captcha.png")

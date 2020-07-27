@@ -1,9 +1,14 @@
 from __future__ import unicode_literals, print_function, absolute_import
 
+import logging
+
 import requests
 from lxml import html
 from lxml.etree import ParserError
-from tools import norm_url, download_pdf
+
+from tool import norm_url, download_pdf
+
+logger = logging.getLogger("scihub")
 
 
 class LibGen(object):
@@ -24,7 +29,12 @@ class LibGen(object):
         self.html_content = None
 
     def start(self):
-        self.s =requests.Session()
+        self.s = requests.Session()
+
+    def exit(self):
+        if self.s is not None:
+            self.s.close()
+
     def download(self):
         found, r = download_pdf(
             self.s,
@@ -33,7 +43,7 @@ class LibGen(object):
             self.headers,
             filetype="application/octet-stream")
 
-        return found,  r
+        return found, r
 
     def navigate_to(self, doi, pdf_file):
 
@@ -45,12 +55,11 @@ class LibGen(object):
         )
         self.page_url = r.url
         self.pdf_file = pdf_file
-        print("\n\tDOI: ", doi)
-        print("\tLibGen Link: ", self.page_url)
+        logger.info("DOI: %s, LibGen Link: %s", doi, self.page_url)
         found = r.status_code == 200
         if not found:
-            print("\tMaybe libgen is down. Try to use sci-hub instead.")
-            return found,  r
+            logger.error("Maybe libgen is down. Try to use sci-hub instead.")
+            return found, r
 
         self.html_content = r.content
         return found, r
@@ -61,9 +70,8 @@ class LibGen(object):
             self.html_tree = html.fromstring(self.html_content)
             success = True
         except ParserError:
-            print("\tThe LibGen page has a strange bewavior")
-            print("\tTry open in browser to check")
-            print(self.page_url)
+            logger.error("The LibGen page has a strange behaviour. Please try open in browser to check: %s",
+                         self.page_url)
             success = False
 
         return success, self.html_tree
@@ -71,7 +79,7 @@ class LibGen(object):
     def get_pdf_url(self):
         html_a = self.html_tree.xpath(self.xpath_pdf_url)
         if len(html_a) == 0:
-            print("\tPDF link for ", self.page_url, " not found")
+            logger.error("PDF link for not found: %s", self.page_url)
             found = False
             self.pdf_url = None
         else:
