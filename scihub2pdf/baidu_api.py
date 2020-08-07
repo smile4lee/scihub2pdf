@@ -6,8 +6,9 @@ import pandas as pd
 import requests
 
 # change these parameters if needed
-access_token = "24.0f5824ebe6b53c8d75dc35aafc93aa7f.2592000.1599356676.282335-21649372"
-word_analysis_url = "https://aip.baidubce.com/rpc/2.0/nlp/v1/sentiment_classify?charset=UTF-8&access_token=24.0f5824ebe6b53c8d75dc35aafc93aa7f.2592000.1599356676.282335-21649372"
+# provide your own access_token and url here
+access_token = ""
+word_analysis_url = "https://aip.baidubce.com/rpc/2.0/nlp/v1/sentiment_classify"
 
 # input path
 in_path = 'D:\\tmp\\anli.xlsx'
@@ -17,14 +18,15 @@ out_path = 'D:\\tmp\\anli_result.xlsx'
 out_path_csv = 'D:\\tmp\\anli_result.csv'
 
 # sleep time between two invocations, unit: second
+# change it if needed
 sleep = 3
 
 
 class BaiduExamples(object):
     def __init__(self):
         self.charset = "UTF-8"
-        self.access_token = "24.0f5824ebe6b53c8d75dc35aafc93aa7f.2592000.1599356676.282335-21649372"
-        self.word_analysis_url = "https://aip.baidubce.com/rpc/2.0/nlp/v1/sentiment_classify?charset=UTF-8&access_token=24.0f5824ebe6b53c8d75dc35aafc93aa7f.2592000.1599356676.282335-21649372"
+        self.access_token = access_token
+        self.word_analysis_url = word_analysis_url
         self.store_id_list = []
         self.log_id_list = []
         self.text_list = []
