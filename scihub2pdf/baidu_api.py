@@ -10,11 +10,11 @@ access_token = "24.0f5824ebe6b53c8d75dc35aafc93aa7f.2592000.1599356676.282335-21
 word_analysis_url = "https://aip.baidubce.com/rpc/2.0/nlp/v1/sentiment_classify?charset=UTF-8&access_token=24.0f5824ebe6b53c8d75dc35aafc93aa7f.2592000.1599356676.282335-21649372"
 
 # input path
-in_path = 'C:\\Users\\lihaijun\\Desktop\\tmp\\anli.xlsx'
+in_path = 'D:\\tmp\\anli.xlsx'
 
 # output filepath: xlsx and csv
-out_path = 'C:\\Users\\lihaijun\\Desktop\\tmp\\anli_result.xlsx'
-out_path_csv = 'C:\\Users\\lihaijun\\Desktop\\tmp\\anli_result.csv'
+out_path = 'D:\\tmp\\anli_result.xlsx'
+out_path_csv = 'D:\\tmp\\anli_result.csv'
 
 # sleep time between two invocations, unit: second
 sleep = 3
