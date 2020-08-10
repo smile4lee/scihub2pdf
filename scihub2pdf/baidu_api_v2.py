@@ -5,6 +5,8 @@ import time
 import pandas as pd
 import requests
 import traceback
+import glob
+import os
 
 # change these parameters if needed
 # provide your own access_token and url here
@@ -13,12 +15,10 @@ access_token = ""
 base_url = "https://aip.baidubce.com/rpc/2.0/nlp/v1/sentiment_classify"
 charset = "UTF-8"
 
-# input path
-in_path = 'D:\\tmp\\whlianxi-bak.xlsx'
+# input and output dir path, must exist on disk
+in_dir_path = 'D:\\tmp\\dir'
+out_dir_path = 'D:\\tmp\\dir-out'
 
-# output filepath: xlsx and csv
-out_path = 'D:\\tmp\\whlianxi-bak_result.xlsx'
-out_path_csv = 'D:\\tmp\\whlianxi-bak_result.csv'
 
 # sleep time between two invocations, unit: second
 # change it if needed
@@ -125,9 +125,9 @@ class BaiduExamples(object):
 
 
 # read input xlsx file
-def read_excel(path):
+def read_excel(in_filepath, out_dir):
     # pd.set_option('display.float_format', lambda x: '%.2f' % x)
-    df = pd.read_excel(path)
+    df = pd.read_excel(in_filepath)
     df_li = df.values.tolist()
     # rows and columns
     row_count = len(df_li)
@@ -160,9 +160,28 @@ def read_excel(path):
     be.build_dataframe()
 
     # save to xlsx and csv file
+    out_path = out_dir_path + "\\" + get_filename_without_extension(in_filepath) + "-result.xlsx"
+    out_path_csv = out_dir_path + "\\" + get_filename_without_extension(in_filepath) + "-result.csv"
     be.save_df_to_excel(out_path)
     be.save_df_to_csv(out_path_csv)
 
 
+def list_files(dir, extension='\\*.xlsx'):
+    files = glob.glob(dir + extension)
+    return files
+
+
+def get_filename_without_extension(path):
+    basename = os.path.basename(path)
+    return os.path.splitext(basename)[0]
+
+
 if __name__ == "__main__":
-    read_excel(in_path)
+    # read_excel(in_path)
+    files = list_files(in_dir_path)
+    total = len(files)
+    current = 0
+    for f in files:
+        current += 1
+        print("%s/%s, file: %s" % (current, total, f))
+        read_excel(f, out_dir_path)
