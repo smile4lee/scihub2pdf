@@ -1,2 +1,31 @@
-Remote sensing and land cover area estimation
-Generating global crop distribution maps: From census to grid
+Application of Multitemporal ERS-2 Synthetic Aperture Radar in Delineating Rice Cropping Systems in the Mekong River Delta
+Corn and soybean mapping in the United States using MODIS time-series data sets
+Global discrimination of land cover types from metrics derived from AVHRR pathfinder data
+Global land cover classification at 1 km spatial resolution using a classification tree approach
+Wheat yield forecasting for Punjab Province from vegetation index time series and historic crop statistics
+Estimating global cropland extent with multi-year MODIS data
+Monitoring global croplands with coarse resolution earth observations: the Global Agriculture Monitoring (GLAM) project
+A framework for defining spatially explicit earth observation requirements for a global agricultural monitoring initiative (GEOGLAM)
+Towards a set of agrosystem-specific cropland mapping methods to address the global cropland diversity
+Estimating area from an accuracy assessment error matrix
+Good practices for estimating area and assessing accuracy of land change
+Satellite image-based maps: Scientific inference or pretty pictures? 
+Efficiency assessment of using satellite data for crop area estimation in Ukraine
+Aboveground carbon loss in natural and managed tropical forests from 2000 to 2012
+Global bare ground gain from 2000 to 2012 using Landsat imagery
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
