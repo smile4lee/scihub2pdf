@@ -101,3 +101,26 @@ download all pdf's
 ```
 $ scihub2pdf -i arxiv_ids.txt --txt
 ```
+
+# Notes
+- when get arxiv items by title, we want to use the first one directly instead of asking user to choose one by promoting an input, 
+    which will hang the download process. See the code below `title2bib\crossref.py`:
+    
+    ```python
+    def get_from_title(title, get_first=False):
+        # ...
+    
+        if r.status_code == 200 and len(items) > 0:
+            items = sort_items_by_title(items, title)
+            # use the first item directly
+            found = True
+            item = items[0]
+  
+            # if get_first:
+            #     found = True
+            #     item = items[0]
+            # else:
+            #    found, item = ask_which_is(title, items)
+    
+        # ...
+    ```
