@@ -175,13 +175,23 @@ def get_filename_without_extension(path):
     basename = os.path.basename(path)
     return os.path.splitext(basename)[0]
 
+def hello_world():
+    print("hello world")
 
 if __name__ == "__main__":
     # read_excel(in_path)
     files = list_files(in_dir_path)
+
+    hello_world()
+
     total = len(files)
     current = 0
+
     for f in files:
         current += 1
         print("%s/%s, file: %s" % (current, total, f))
+
         read_excel(f, out_dir_path)
+        # api
+
+
