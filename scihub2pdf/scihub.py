@@ -1,4 +1,4 @@
-from __future__ import unicode_literals, print_function, absolute_import
+# from __future__ import unicode_literals, print_function, absolute_import
 
 import sys
 from base64 import b64decode as b64d
@@ -6,6 +6,7 @@ from base64 import b64decode as b64d
 import requests
 from PIL import Image
 from selenium.common.exceptions import NoSuchElementException
+from selenium import webdriver
 from six import string_types
 
 from tool import norm_url, download_pdf
@@ -54,9 +55,10 @@ class SciHub(object):
     def start(self):
         try:
             self.s = requests.Session()
-            # self.driver = webdriver.PhantomJS()
+            self.driver = webdriver.PhantomJS()
             # driver_path = "C:\\Portable\\chromedriver_win32\\chromedriver.exe"
-            self.driver = tool.get_driver(self.driver_path)
+            # for windows
+            # self.driver = tool.get_driver(self.driver_path)
         except Exception as e:
             logger.error("get driver error")
             logger.exception(e)

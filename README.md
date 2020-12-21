@@ -1,3 +1,8 @@
+# for linux env
+- [install phantomjs](https://www.liquidweb.com/kb/how-to-install-phantomjs-on-centos-7/)
+- install requirements by conda `conda install -c conda-forge --file requirements.txt`
+- if failed to install in conda, install by pip
+
 # SciHub to PDF(Beta)
 
 Many thanks to [bibcure](https://github.com/bibcure) for the original repository: https://github.com/bibcure/scihub2pdf

@@ -1,7 +1,9 @@
 # chrome driver path
+# for windows
 driver_path = 'C:\\Portable\\chromedriver_win32\\chromedriver.exe'
+
 # existed pdf download location
-location = '.\\download'
+location = './download'
 # scihub domain
 domain_scihub = "http://sci-hub.st/"
 

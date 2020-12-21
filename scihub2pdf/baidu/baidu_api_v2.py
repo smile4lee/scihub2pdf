@@ -11,7 +11,7 @@ import os
 # change these parameters if needed
 # provide your own access_token and url here
 # access_token = ""
-access_token = ""
+access_token = "24.0f5824ebe6b53c8d75dc35aafc93aa7f.2592000.1599356676.282335-21649372"
 base_url = "https://aip.baidubce.com/rpc/2.0/nlp/v1/sentiment_classify"
 charset = "UTF-8"
 
@@ -23,6 +23,14 @@ out_dir_path = 'D:\\tmp\\dir-out'
 # sleep time between two invocations, unit: second
 # change it if needed
 sleep = 0.5
+
+
+def jieba_method():
+    text = "推荐外出团建，集体出游的小伙伴选择这个地方。条件是要开车前往有汽渡会把大家渡江过去，地方很大，环境很空旷，空气较城市清新远离尘嚣，寻这样一个地方，很放松。下次组织活动还会再来的，有废弃的船和细软的沙洲，推荐。"
+    seg_list = jieba.cut(text,cut_all = True)
+    print ("Full model:" + "/".join(seg_list))
+    return seg_list
+
 
 
 class BaiduExamples(object):
@@ -79,6 +87,30 @@ class BaiduExamples(object):
         # parse json response
         data = json.loads(res_text)
 
+        """
+        {
+            "log_id": 1565463256786425365,
+            "text": "带孩子去很不错哦，草莓新鲜，骑车就方便了，自己走估计有点累",
+            "items": [
+                {
+                    "positive_prob": 0.999858,
+                    "confidence": 0.999684,
+                    "negative_prob": 0.0001422,
+                    "sentiment": 2
+                },
+                {
+                    "positive_prob": 0.999858,
+                    "confidence": 0.999684,
+                    "negative_prob": 0.0001422,
+                    "sentiment": 2
+                }
+            ]
+        }
+        """
+
+
+
+
         # parse parameters in json
         log_id = data['log_id']
         text = data['text']
@@ -127,7 +159,7 @@ class BaiduExamples(object):
 # read input xlsx file
 def read_excel(in_filepath, out_dir):
     # pd.set_option('display.float_format', lambda x: '%.2f' % x)
-    df = pd.read_excel(in_filepath)
+    df = pd.read_excel(in_filepath) # dataframe
     df_li = df.values.tolist()
     # rows and columns
     row_count = len(df_li)
@@ -147,7 +179,8 @@ def read_excel(in_filepath, out_dir):
         # do analysis
         res_text = None
         try:
-            res_text = be.word_analysis(text)
+            jieba_method(text)
+            # res_text = be.word_analysis(text)
             # append results into lists
             be.append_list(store_id, res_text)
         except Exception as e:

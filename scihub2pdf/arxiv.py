@@ -1,4 +1,4 @@
-from __future__ import unicode_literals, print_function, absolute_import
+# from __future__ import unicode_literals, print_function, absolute_import
 import requests
 from arxivcheck.arxiv import get_arxiv_pdf_link
 from tool import download_pdf
