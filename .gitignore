@@ -105,3 +105,4 @@ ENV/
 scihub2pdf/log/*
 scihub2pdf/input/*
 scihub2pdf/download/*
+.idea
